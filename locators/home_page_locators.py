@@ -1,20 +1,20 @@
 from selenium.webdriver.common.by import By
 
 class HomePageLocators:
-    # Локаторы для вопросов - исправленные
+    # Локаторы для вопросов
     QUESTION_LOCATOR = (By.XPATH, "//div[@data-accordion-component='AccordionItemButton']")
-    ANSWER_LOCATOR = (By.XPATH, "//div[@data-accordion-component='AccordionItemPanel' and @hidden='false']")
+    ANSWER_LOCATOR = (By.XPATH, "//div[@data-accordion-component='AccordionItemPanel' and not(@hidden)]")
     
-    # Локаторы для кнопок заказа
-    ORDER_BUTTON_TOP = (By.XPATH, "//button[contains(@class, 'Button_Button__ra12g') and text()='Заказать']")
-    ORDER_BUTTON_BOTTOM = (By.XPATH, "(//button[contains(@class, 'Button_Button__ra12g') and text()='Заказать'])[2]")
+    # Локаторы для кнопок заказа (ищем все, выбор в тестах по индексу; оптимально добавить data-атрибуты в разметку)
+    ORDER_BUTTONS = (By.XPATH, "//button[contains(@class, 'Button_Button__ra12g') and text()='Заказать']")
     
-    # Локаторы логотипов
-    SAMOKAT_LOGO = (By.XPATH, "//a[@href='/']")
-    YANDEX_LOGO = (By.XPATH, "//a[@href='//yandex.ru']")
+    # Логотип Самоката 
+    SAMOKAT_LOGO = (By.XPATH, "//a[contains(@href, '/')]")
+    # Логотип Яндекса 
+    YANDEX_LOGO = (By.XPATH, "//a[contains(@href, 'yandex.ru')]")
     
-    # Локатор для куки
+    # Кнопка согласия с куки
     COOKIE_BUTTON = (By.ID, "rcc-confirm-button")
     
-    # Локатор заголовка страницы
-    PAGE_TITLE = (By.XPATH, "//h1[text()='Самокат ']")
+    # Заголовок страницы — ищем по тексту, без абсолютного пути
+    PAGE_TITLE = (By.XPATH, "//h1[contains(text(),'Самокат')]")
