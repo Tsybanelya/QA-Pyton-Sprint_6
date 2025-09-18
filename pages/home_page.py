@@ -1,18 +1,13 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from .base_page import BasePage
 from locators.home_page_locators import HomePageLocators
 import allure
+from selenium.common.exceptions import NoSuchElementException
 
 class HomePage(BasePage):
-    @allure.step("Инициализация HomePage")
     def __init__(self, driver):
         super().__init__(driver)
         self.locators = HomePageLocators()
-
-    @allure.step("Открываем главную страницу")
-    def open(self):
-        self.driver.get(self.base_url)
 
     @allure.step("Принимаем cookies")
     def accept_cookies(self):
@@ -23,25 +18,38 @@ class HomePage(BasePage):
         questions = self.find_elements(self.locators.QUESTION_LOCATOR)
         if index < len(questions):
             questions[index].click()
+        else:
+            raise NoSuchElementException(f"Вопрос с индексом {index} не найден")
 
     @allure.step("Получаем текст открытого ответа")
     def get_answer_text(self):
         answer = self.wait_for_element_visible(self.locators.ANSWER_LOCATOR)
         return answer.text
+    
+    @allure.step("Кликаем на кнопку 'Заказать' по локатору и индексу")
+    def click_order_button(self, locator, index=0):
+        buttons = self.find_elements(locator)
+        if not buttons or index >= len(buttons):
+            raise NoSuchElementException("Кнопка по указанному локатору не найдена или индекс вне диапазона!")
+        buttons[index].click()
 
     @allure.step("Кликаем по верхней кнопке 'Заказать'")
     def click_order_button_top(self):
-        buttons = self.find_elements(self.locators.ORDER_BUTTONS)
+        buttons = self.find_elements(self.locators.ORDER_BUTTON_HEADER)
         if buttons:
             buttons[0].click()
+        else:
+            raise NoSuchElementException("Верхняя кнопка 'Заказать' не найдена")
 
     @allure.step("Кликаем по нижней кнопке 'Заказать'")
     def click_order_button_bottom(self):
-        # Скролл может остаться, если он необходим для доступности кнопки
+        # Скролл, если нужен (оставлен)
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        buttons = self.find_elements(self.locators.ORDER_BUTTONS)
-        if len(buttons) > 1:
-            buttons[1].click()
+        buttons = self.find_elements(self.locators.ORDER_BUTTON_FOOTER)
+        if buttons:
+            buttons[-1].click()  # всегда последний
+        else:
+            raise NoSuchElementException("Нижняя кнопка 'Заказать' не найдена")
 
     @allure.step("Кликаем по логотипу Самоката")
     def click_samokat_logo(self):
@@ -51,14 +59,11 @@ class HomePage(BasePage):
     def click_yandex_logo(self):
         self.click_element(self.locators.YANDEX_LOGO)
 
-    @allure.step("Получаем текущий URL")
-    def get_current_url(self):
-        return self.driver.current_url
-
     @allure.step("Проверяем, что главная страница отображается")
     def is_home_page_displayed(self):
         return self.is_element_visible(self.locators.PAGE_TITLE)
-    @allure.step("Ждём, что ответ стал видимым")
+
+    @allure.step("Ждём, что ответ видим")
     def is_answer_visible(self):
         return self.is_element_visible(self.locators.ANSWER_LOCATOR)
 

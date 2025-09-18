@@ -28,7 +28,6 @@ class TestNavigation:
         new_window = home_page.get_new_window_handle(main_window)
         home_page.switch_to_window(new_window)
         home_page.wait_for_url_contains("dzen.ru")
-
         current_url = home_page.get_current_url()
         assert "dzen.ru" in current_url, \
             f"Неверный URL после клика на логотип Яндекса: {current_url}"

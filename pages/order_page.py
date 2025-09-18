@@ -4,10 +4,13 @@ from locators.order_page_locators import OrderPageLocators
 import allure
 
 class OrderPage(BasePage):
-    @allure.step("Открываем страницу заказа")
     def __init__(self, driver):
         super().__init__(driver)
         self.locators = OrderPageLocators()
+
+    @allure.step("Открываем страницу заказа")
+    def open(self):
+        self.driver.get(self.base_url + "order")  # если страница заказа по /order, можно явно прописать
 
     @allure.step("Заполняем первую страницу заказа: имя={name}, фамилия={last_name}, адрес={address}, метро={metro_station}, телефон={phone}")
     def fill_first_page(self, name, last_name, address, metro_station, phone):

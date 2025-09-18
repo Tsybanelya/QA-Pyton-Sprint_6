@@ -9,55 +9,55 @@ class BasePage:
         self.base_url = "https://qa-scooter.praktikum-services.ru/"
 
     @allure.step("Поиск элемента по локатору: {locator}")
-    def find_element(self, locator, time=10):
-        return WebDriverWait(self.driver, time).until(
+    def find_element(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located(locator),
-            message=f"Can't find element by locator {locator}"
+            message=f"Не найден элемент по локатору {locator}"
         )
 
     @allure.step("Поиск всех элементов по локатору: {locator}")
-    def find_elements(self, locator, time=10):
-        return WebDriverWait(self.driver, time).until(
+    def find_elements(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_all_elements_located(locator),
-            message=f"Can't find elements by locator {locator}"
+            message=f"Не найдены элементы по локатору {locator}"
         )
 
-    @allure.step("Клик по элементу с локатором: {locator}")
-    def click_element(self, locator, time=10):
-        el = self.find_element(locator, time)
+    @allure.step("Клик по элементу: {locator}")
+    def click_element(self, locator, timeout=10):
+        el = self.find_element(locator, timeout)
         el.click()
 
     @allure.step("Ввод текста '{text}' в элемент: {locator}")
-    def input_text(self, locator, text, time=10):
-        el = self.find_element(locator, time)
+    def input_text(self, locator, text, timeout=10):
+        el = self.find_element(locator, timeout)
         el.clear()
         el.send_keys(text)
 
     @allure.step("Ожидание, когда элемент станет кликабельным: {locator}")
-    def wait_for_element_to_be_clickable(self, locator, time=10):
-        return WebDriverWait(self.driver, time).until(
+    def wait_for_element_to_be_clickable(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
             EC.element_to_be_clickable(locator),
-            message=f"Element not clickable {locator}"
+            message=f"Элемент не стал кликабельным: {locator}"
         )
 
     @allure.step("Получение текста элемента: {locator}")
-    def get_text(self, locator, time=10):
-        el = self.find_element(locator, time)
+    def get_text(self, locator, timeout=10):
+        el = self.find_element(locator, timeout)
         return el.text
 
     @allure.step("Проверка видимости элемента: {locator}")
-    def is_element_visible(self, locator, time=10):
+    def is_element_visible(self, locator, timeout=10):
         try:
-            WebDriverWait(self.driver, time).until(
+            WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located(locator)
             )
             return True
         except TimeoutException:
             return False
 
-    @allure.step("Ожидание, когда элемент станет невидимым: {locator}")
-    def wait_for_element_to_disappear(self, locator, time=10):
-        return WebDriverWait(self.driver, time).until(
+    @allure.step("Ожидание, когда элемент исчезнет: {locator}")
+    def wait_for_element_to_disappear(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
             EC.invisibility_of_element_located(locator),
             message=f"Элемент не исчез: {locator}"
         )
@@ -74,7 +74,7 @@ class BasePage:
     def get_current_window_handle(self):
         return self.driver.current_window_handle
 
-    @allure.step("Получаем новый дескриптор окна (появился дополнительный)")
+    @allure.step("Получить новый дескриптор окна (после появления нового окна)")
     def get_new_window_handle(self, old_handle):
         handles = self.driver.window_handles
         for handle in handles:
@@ -82,19 +82,27 @@ class BasePage:
                 return handle
         raise Exception("Новое окно не появилось")
 
-    @allure.step("Переключаемся в окно браузера с дескриптором {handle}")
+    @allure.step("Переключиться в окно браузера с дескриптором {handle}")
     def switch_to_window(self, handle):
         self.driver.switch_to.window(handle)
 
-    @allure.step("Ждем, что открыто новое окно по сравнению с {old_handle}")
+    @allure.step("Ждать новое окно по сравнению с {old_handle}")
     def wait_for_new_window_opened(self, old_handle, timeout=10):
         WebDriverWait(self.driver, timeout).until(
             lambda d: len(d.window_handles) > 1 and any(h != old_handle for h in d.window_handles),
             message="Новое окно не появилось"
         )
 
-    @allure.step("Ждем, что url содержит подстроку: {substring}")
+    @allure.step("Ждать, что url содержит подстроку: {substring}")
     def wait_for_url_contains(self, substring, timeout=10):
+
         WebDriverWait(self.driver, timeout).until(
             EC.url_contains(substring),
+            message=f"URL не содержит '{substring}'"
+        )
+    @allure.step("Ждём, что элемент видим: {locator}")
+    def wait_for_element_visible(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(locator),
+            message=f"Элемент не стал видимым: {locator}"
         )

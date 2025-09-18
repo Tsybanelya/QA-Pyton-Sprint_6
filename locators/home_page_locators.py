@@ -5,9 +5,11 @@ class HomePageLocators:
     QUESTION_LOCATOR = (By.XPATH, "//div[@data-accordion-component='AccordionItemButton']")
     ANSWER_LOCATOR = (By.XPATH, "//div[@data-accordion-component='AccordionItemPanel' and not(@hidden)]")
     
-    # Локаторы для кнопок заказа (ищем все, выбор в тестах по индексу; оптимально добавить data-атрибуты в разметку)
-    ORDER_BUTTONS = (By.XPATH, "//button[contains(@class, 'Button_Button__ra12g') and text()='Заказать']")
-    
+    # Кнопка "Заказать" в хедере
+    ORDER_BUTTON_HEADER = (By.CSS_SELECTOR, ".Header_Nav__AGCXC .Button_Button__ra12g")
+    # Кнопка "Заказать" внизу страницы  
+    ORDER_BUTTON_FOOTER = (By.CSS_SELECTOR, ".Home_FinishButton__1_cWm > button")
+
     # Логотип Самоката 
     SAMOKAT_LOGO = (By.XPATH, "//a[contains(@href, '/')]")
     # Логотип Яндекса 

@@ -15,8 +15,10 @@ class TestQuestions:
         home_page = HomePage(driver)
         home_page.open()
         home_page.accept_cookies()
+        
         home_page.click_question(question_index)
-        # Ждём появления и сравниваем ответ по индексу
+        # Ждем, пока ответ стал видим
+        assert home_page.is_answer_visible(), "Ответ не отобразился после клика"
         actual_answer = home_page.get_answer_text()
         assert actual_answer == expected_answer, (
             f"Ожидаемый ответ: {expected_answer}, Фактический: {actual_answer}"
@@ -30,13 +32,10 @@ class TestQuestions:
         home_page.open()
         home_page.accept_cookies()
 
-        # Первый клик — открытие ответа (ждём появления!)
         home_page.click_question(question_index)
         assert home_page.is_answer_visible(), "Ответ не отобразился после первого клика"
 
-        # Второй клик — закрытие ответа (ждём исчезновения!)
         home_page.click_question(question_index)
         home_page.wait_for_answer_disappear()
-
-        # Проверяем, что вопрос теперь свернут (всё внутри PageObject)
+        # Проверяем, что вопрос теперь свернут через метод PageObject
         assert home_page.is_question_collapsed(question_index), "Ответ не скрылся после второго клика"
